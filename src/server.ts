@@ -12,6 +12,15 @@ app.get("/", (req, res) => {
     return res.status(404).send({message: "Query not found in routes"})
 })
 
+app.setErrorHandler((error, req, res) => {
+    const errorPossibleJSON = JSON.parse(error.message)
+    if(errorPossibleJSON){
+        error.message = errorPossibleJSON
+    }
+
+    res.status(400).send({message: error.message})
+})
+
 app.listen({
     port: env.PORT
 }, () => {

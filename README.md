@@ -1,5 +1,7 @@
 # Regras de Negócio
 
+CRUD ALL FIRST
+
 - [ ] Deve ser possível criar um usuário -> POST USER
 - [ ] Deve ser possível identificar o usuário entre as requisições -> Cookie Token
 - [ ] Deve ser possível registrar uma refeição feita, com as seguintes informações:
@@ -25,7 +27,7 @@ POST MEALS
 - O usuário só pode visualizar, editar e apagar as refeições o qual ele criou -> COOKIE OBRIGATÓRIO ENTRE REQS
 
 Extra:
-- [] Deverá possuir uma rota de login e cadastro -> GET/POST/PUT em USERS
+- [ ] Deverá possuir uma rota de login e cadastro -> GET/POST/PUT em USERS
 
 # Requisitos Não funcionais
 - Utilizar o SQLITE com KNEX
