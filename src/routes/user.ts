@@ -33,6 +33,24 @@ export async function userRoutes(app: FastifyInstance){
     })
 
     app.put('/:userId', async (req,res) => {
-        return await knex.from("sqlite_master").select("*")
+        const userParamsSchema = z.object({
+            userId: z.string()
+        })
+
+        const { userId } = userParamsSchema.parse(req.params);
+        const { name, password, cpf } = userSchema.parse(req.body);
+
+        await knex
+        .from("users")
+        .where({
+            id: userId
+        })
+        .update({
+            name, 
+            password, 
+            cpf
+        })
+
+        return res.status(200).send()
     })
 }
