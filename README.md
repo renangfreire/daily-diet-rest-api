@@ -6,8 +6,8 @@ CRUD ALL FIRST
     - [X] Editar
     - [X] Deletar
     - [X] Pesquisar
-- [ ] Deve ser possível identificar o usuário entre as requisições -> Cookie Token
-- [ ] Deve ser possível registrar uma refeição feita, com as seguintes informações:
+- [X] Deve ser possível identificar o usuário entre as requisições -> Cookie Token
+- [X] Deve ser possível registrar uma refeição feita, com as seguintes informações:
     - Nome
     - Descrição
     - Data e Hora
