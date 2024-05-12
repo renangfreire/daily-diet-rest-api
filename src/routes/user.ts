@@ -25,7 +25,12 @@ interface MealsExpandSchema {
 export async function userRoutes(app: FastifyInstance){
     app.get('/', async (req,res) => {
         const query = await knex.from("users").select("*")
-        return query.map(({session_id, ...rest}) => rest)
+
+        const data = query.map(({session_id, ...rest}) => rest)
+
+        return {
+            users: data
+        }
     })
 
     // ROUTE WITH EXPAND (Bastante role fazer na mão com query builder)
@@ -92,7 +97,9 @@ export async function userRoutes(app: FastifyInstance){
             return acc
         }, dataSchema.parse([]))
 
-        return data
+        return {
+            users: data
+        }
     })
 
     app.post('/login', async (req,res) => {
