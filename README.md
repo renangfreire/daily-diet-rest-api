@@ -2,7 +2,10 @@
 
 CRUD ALL FIRST
 
-- [ ] Deve ser possível criar um usuário -> POST USER
+- [X] Deve ser possível criar um usuário -> POST USER
+    - [X] Editar
+    - [X] Deletar
+    - [X] Pesquisar
 - [ ] Deve ser possível identificar o usuário entre as requisições -> Cookie Token
 - [ ] Deve ser possível registrar uma refeição feita, com as seguintes informações:
     - Nome

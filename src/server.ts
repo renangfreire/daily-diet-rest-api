@@ -1,8 +1,13 @@
 import { fastify } from "fastify";
+import fastifyCookie from "@fastify/cookie";
+
+
 import { env } from "./env";
 import { userRoutes } from "./routes/user";
 
 const app = fastify()
+
+app.register(fastifyCookie)
 
 app.register(userRoutes, {
     prefix: "users"
@@ -13,6 +18,7 @@ app.get("/", (req, res) => {
 })
 
 app.setErrorHandler((error, req, res) => {
+    console.log(error)
     const errorPossibleJSON = JSON.parse(error.message)
     if(errorPossibleJSON){
         error.message = errorPossibleJSON
