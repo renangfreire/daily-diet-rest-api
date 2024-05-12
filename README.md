@@ -17,7 +17,7 @@ POST MEALS
 
 - [X] Deve ser possível editar uma refeição, podendo alterar todos os dados acima -> PUTs RECIPES
 - [ ] Deve ser possível apagar uma refeição -> Delete meals
-- [ ] Deve ser possível listar todas as refeições de um usuário -> Cada usuário ter um dashboard
+- [X] Deve ser possível listar todas as refeições de um usuário -> Cada usuário ter um dashboard
 - [ ] Deve ser possível visualizar uma única refeição -> GET Meal by id
 - [ ] Deve ser possível recuperar as métricas de um usuário
     - [ ] Quantidade total de refeições registradas
