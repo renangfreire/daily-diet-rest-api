@@ -10,11 +10,30 @@ const mealsBodySchema = z.object({
     user_id: z.string({required_error: "User assigned is required"})
 })
 
+const mealParamsSchema = z.object({
+    mealId: z.string().nullable()
+})
+
 export async function mealsRoutes(app: FastifyInstance){
     app.addHook("preHandler", verifyUserLogged)
     
     app.get('/', async (req,res) => {
-        return await knex.from("meals").select("*")
+
+        const meals = await knex.from("meals").select("*")
+
+        return {meals} 
+    })
+
+    app.get('/:mealId', async (req,res) => {
+        const { mealId } = mealParamsSchema.parse(req.params)
+
+        if(!mealId){
+            return res.status(406).send({message: "Meal id is required"})
+        }
+        
+        const [ mealSelected ] = await knex.from("meals").where({id: mealId}).select("*") 
+
+        return {meal: mealSelected}
     })
 
     app.post('/', async (req,res) => {
@@ -33,11 +52,7 @@ export async function mealsRoutes(app: FastifyInstance){
     app.put('/:mealId', async (req,res) => {
         const session_id = req.cookies.SESSION_ID
 
-        const paramsSchema = z.object({
-            mealId: z.string()
-        })
-
-        const { mealId } = paramsSchema.parse(req.params)
+        const { mealId } = mealParamsSchema.parse(req.params)
 
         const mealsUpdateSchema = z.object({
             name: z.string({required_error: "Name is required"}),
@@ -46,6 +61,10 @@ export async function mealsRoutes(app: FastifyInstance){
         })
         
         const { description, in_diet, name} = mealsUpdateSchema.parse(req.body)
+
+        if(!mealId){
+            return res.status(406).send({message: "Meal Id is required"})
+        }
 
         await knex.from("meals")
         .where({id: mealId})
@@ -62,11 +81,9 @@ export async function mealsRoutes(app: FastifyInstance){
     app.delete('/:mealId', async (req,res) => {
         const session_id = req.cookies.SESSION_ID
 
-        const paramsSchema = z.object({
-            mealId: z.string()
-        })
+        const { mealId } = mealParamsSchema.parse(req.params)
 
-        const { mealId } = paramsSchema.parse(req.params)
+        if(!mealId) return res.status(406).send({message: "Meal Id is required"})
 
         await knex.from("meals")
         .where({id: mealId})
