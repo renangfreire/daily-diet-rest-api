@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { knex } from "../db/db"
 import { z } from "zod";
+import { verifyUserLogged } from "../middlewares/verifyUserLogged";
 
 const userSchema = z.object({
     name: z.string({required_error: "Name is required"}),
@@ -35,7 +36,9 @@ export async function userRoutes(app: FastifyInstance){
 
     // ROUTE WITH EXPAND (Bastante role fazer na mão com query builder)
     app.get('/meals', async (req,res) => {
-        const responseQuery: MealsExpandSchema[] = await knex.from("users").innerJoin("meals", "users.id", "=", "meals.user_id").select(["*", "users.created_at as users.created_at", "users.name as users.name"])
+        const responseQuery: MealsExpandSchema[] = await knex.from("users")
+                                                        .innerJoin("meals", "users.id", "=", "meals.user_id")
+                                                        .select(["*", "users.created_at as users.created_at", "users.name as users.name"])
 
         const dataSchema = z.array(
             z.object({
@@ -99,6 +102,47 @@ export async function userRoutes(app: FastifyInstance){
 
         return {
             users: data
+        }
+    })
+
+    app.get("/metrics",
+    { preHandler: verifyUserLogged},
+    async (req,res) => {
+        const session_id = req.cookies.SESSION_ID
+
+        const baseQuery = knex.from("users")
+                                .where({session_id})
+                                .innerJoin("meals", "users.id", "=", "meals.user_id")
+
+        const countQuery = baseQuery.clone().count({
+            totalMeals: "*", 
+            totalMealsInDiet: knex.raw('CASE WHEN in_diet = true THEN 1 END'),
+            totalMealsNotInDiet: knex.raw('CASE WHEN in_diet != true THEN 1 END'),
+        }).avg("in_diet", {as: "avgInDiet"})
+
+        const totalElements = baseQuery.clone()
+                                    .select("*")
+                                    .orderBy("created_at")
+
+        const [ [counts], elements] = await Promise.all([countQuery, totalElements])
+
+        console.log(counts)
+
+        let bestSequenceDiet = 0;
+        elements.reduce((acc, element) => {
+            if(!element.in_diet){
+                bestSequenceDiet = acc > bestSequenceDiet ? acc : bestSequenceDiet
+                acc = 0;
+                return acc;
+            }   
+
+            acc++;
+            return acc;
+        }, 0)
+
+        return {
+            ...counts,
+            bestSequenceDiet
         }
     })
 
